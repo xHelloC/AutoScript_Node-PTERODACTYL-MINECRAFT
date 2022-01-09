@@ -95,13 +95,30 @@ clear
     }
 #
 
+# Install Var
+    install_var(){
+        print_info "You can exclude from the backup files.."
+        print_info "folders you don't want, your already excluded world is also logs.. "
+        print_warning "Use a space between each exclusion , e.g. test.run.txt minecraft.jar ... etc"
+        print_info "Your exceptions"
+        read -p '>>> : ' I1 I2 I3 I4 I5 I6 I7 I8 I9 I10 
+        print_info "Name of your world."
+        read -p '>>> : ' world
+        low_echo "$I1 $I2 $I3 $I4 $I5 $I6 $I7"
+
+        if [ -z "$world" ]; then
+            world="world"
+        fi
+    }
+
 # Variables
     Variables(){
-        SCRIPT_VERSION="2.6"
+        SCRIPT_VERSION="2.8"
         SUPPORT_LINK="https://zahrajsi.net"
         SUPPORT="https://zahrajsi.net"
         SCRIPT_N="AutoConfig-Node"
         BACKUP="backup"
+        world="world"
         SPIGOT_VER="1.18.1"
         WATERFALL_VER="1.18.1"
         SPIGOT_LINK="https://papermc.io/ci/job/$SPIGOT_VER/lastStableBuild/artifact/paperclip.jar"
@@ -117,17 +134,19 @@ clear
 #Initial's of backup
     backup() {
         echo -e ""
-        echo -e "* ${GREEN}Performing security backup for your Instance...${reset}"
+        echo -e "* ${GREEN}Performing security $BACKUP for your Instance...${reset}"
 
         if [ -f "backup" ]; then
             echo
-            echo -e "* ${GREEN}There is already a backup, skipping step...${reset}"  
+            echo -e "* ${GREEN}There is already a $BACKUP, skipping step...${reset}"  
             echo 
         else
             echo -e ""
-            print_info "Creating a new backup, without the $IGNORE_BACKUP file"
+            print_info "Creating a new $BACKUP, without the $IGNORE_BACKUP file"
             print_brake_A 40
-            tar -czvf "backup" -- *
+            #tar -czvf "$BACKUP" --exclude="$IGNORE_BACKUP"
+            tar -czvf "$BACKUP" --exclude="$world" --exclude="$world"_the_end --exclude="$world"_nether --exclude='*.bash' --exclude='LICENSE' --exclude='logs' --exclude="$I1" --exclude="$I2" --exclude="$I3" --exclude="$I4" --exclude="$I5" --exclude="$I6" --exclude="$I7" --exclude="$I8" --exclude="$I9" --exclude="$I10" *
+
         fi
 }
 #
@@ -311,6 +330,7 @@ clear
         SERVER_LINK="NO"
     fi
     #exit
+    install_var
     backup
     find_instance
 #
