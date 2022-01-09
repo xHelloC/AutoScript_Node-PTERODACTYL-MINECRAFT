@@ -98,7 +98,7 @@ clear
         WATERFALL_FILE="waterfall.jar"
         BUKKIT_FILE="bukkit.jar"
         ERRORS=()
-        DEBUG="YES"
+        DEBUG="NO"
     }
 #
 
