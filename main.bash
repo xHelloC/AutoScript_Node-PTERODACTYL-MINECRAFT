@@ -98,6 +98,7 @@ clear
         WATERFALL_FILE="waterfall.jar"
         BUKKIT_FILE="bukkit.jar"
         ERRORS=()
+        DEBUG="YES"
     }
 #
 
@@ -523,15 +524,18 @@ clear
     }
 #
 main
-debug(){
-    echo -e ""
-    print_error "DEBUG MENU"
-    echo -e ""
-    echo "$SERVER_LINK"
-    echo "$PROPERTIES"
-    echo "$INSTANCE"
-    echo "$MOTD_SET"
-    echo "$TMP_GREP"
-    echo "$AUTHME"
-    errors
+if [ "$DEBUG" == "YES" ]; then
+    debug(){
+        echo -e ""
+        print_error "DEBUG MENU"
+        echo -e ""
+        echo "$SERVER_LINK"
+        echo "$PROPERTIES"
+        echo "$INSTANCE"
+        echo "$MOTD_SET"
+        echo "$TMP_GREP"
+        echo "$AUTHME"
+        errors
     }
+    debug
+fi
