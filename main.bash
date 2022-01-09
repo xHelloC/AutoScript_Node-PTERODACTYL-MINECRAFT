@@ -2,17 +2,11 @@
 #shellcheck source=/dev/null
 
 ###################################################
-<<<<<<< Updated upstream
-#  Install Script for automaticall add's plugins        
-#  @Zahrajsi.net
-#  @Owner: F0cus
-#  Version: 3.1
-=======
 #  I#  Install Script for automaticall add's plugins        
 #  @Zahrajsi.net
 #  @Owner: F0cus
 #  Version: 3.2
->>>>>>> Stashed changes
+#  Reverse installer Minecraft
 ###################################################
 clear
 
