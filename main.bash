@@ -56,6 +56,15 @@ clear
     echo ""
     }
 
+    print_brake_A() {
+    for ((n = 0; n < $1; n++)); do
+        echo -n " ┅"
+    done
+    echo ""
+    }
+
+   
+
     print_warning() {
     COLOR_YELLOW='\033[1;33m'
     COLOR_NC='\033[0m'
@@ -90,6 +99,9 @@ clear
     Variables(){
         SCRIPT_VERSION="2.2"
         SUPPORT_LINK="https://zahrajsi.net"
+        SUPPORT="https://zahrajsi.net"
+        SCRIPT_N="AutoConfig-Node"
+        BACKUP="backup"
         SPIGOT_VER="1.18.1"
         WATERFALL_VER="1.18.1"
         SPIGOT_LINK="https://papermc.io/ci/job/$SPIGOT_VER/lastStableBuild/artifact/paperclip.jar"
@@ -102,13 +114,30 @@ clear
     }
 #
 
+#Initial's of backup
+    backup() {
+        echo -e ""
+        echo -e "* ${GREEN}Performing security backup for your Instance...${reset}"
+
+        if [ -f "backup" ]; then
+            echo
+            echo -e "* ${GREEN}There is already a backup, skipping step...${reset}"  
+            echo 
+        else
+            echo -e ""
+            print_info "Creating a new backup, without the $IGNORE_BACKUP file"
+            print_brake_A 40
+            tar -czvf "backup" -- *
+        fi
+}
+#
+
 # Find Instance
     find_instance() {
     set -e
     echo
-    print_brake 47
     echo -e "* ${BLUE}Looking for your server instance...${reset}"
-    print_brake 47
+    print_brake_A 40
     echo
     
     sleep 3
@@ -130,34 +159,6 @@ clear
     }
 #
 
-
-#Initial's of backup
-    backup() {
-        echo ""
-        print_brake 47
-        echo -e "* ${GREEN}Performing security backup for your Instance...${reset}"
-        print_brake 47
-
-        if [ -f "backup" ]; then
-            echo
-            print_brake 45
-            echo -e "* ${GREEN}There is already a backup, skipping step...${reset}"  
-            print_brake 45
-            sleep 6
-            echo
-        else
-            print_brake 47
-            print_info "Making new BackUp"
-            print_brake 47
-            sleep 2
-            tar -czvf "backup" -- *
-            sleep 6
-        fi
-}
-#
-
-
-
 # VAR SPIGOT
     vars_spigot(){
     PROPERTIES="server.properties" 
@@ -178,39 +179,6 @@ clear
     W_Login_tar="authme-conf-bungee.tar.gz"
     W_S_DIR="plugins"
     }
-#
-
-# Initial code
-    main() {
-    # WELCOME MESS.
-    # RUN_CODE
-        RUN_CODE(){
-            check_distro
-            Variables
-            colour
-
-            errors(){
-                for t in "${error[@]}"; do
-                    echo "$t"
-                done
-            }
-        }  
-    #
-    RUN_CODE
-    print_brake 47
-    echo -e "* ${YELLOW} Install Script AutoConfigNODE ${reset}"
-    low_echo "Owner: F0cus"
-    low_echo "Version: $SCRIPT_VERSION"
-    low_echo "Support: $SUPPORT_LINK"
-    print_brake 47
-    echo -e "* ${YELLOW} Checking Download URL ${reset}"
-    if wget --spider "https://zahrajsi.net/amp/assets/pngs/server-icon.png" 2>/dev/null; then
-        SERVER_LINK="YES"
-    else
-        SERVER_LINK="NO"
-    fi
-    backup
-    find_instance
 #
 
 # VAR OTHER PLUGINS
@@ -311,6 +279,41 @@ clear
     #
 #
 
+# Initial code
+    main() {
+    # WELCOME MESS.
+    # RUN_CODE
+        RUN_CODE(){
+            check_distro
+            Variables
+            colour
+
+            errors(){
+                for t in "${error[@]}"; do
+                    echo "$t"
+                done
+            }
+        }  
+    #
+    RUN_CODE
+    print_brake 47
+    echo -e "* ${YELLOW} Install Script AutoConfig-Node ${reset}"
+    low_echo "Owner: F0cus"
+    low_echo "Version: $SCRIPT_VERSION"
+    low_echo "Support: $SUPPORT_LINK"
+    print_brake 47
+    echo -e ""
+    echo -e "* ${YELLOW} Checking download URL ${reset}"
+    if wget --spider "https://zahrajsi.net/amp/assets/pngs/server-icon.png" 2>/dev/null; then
+        SERVER_LINK="YES"
+        print_success "Available"
+    else
+        SERVER_LINK="NO"
+    fi
+    #exit
+    backup
+    find_instance
+#
 
 
 
@@ -319,7 +322,6 @@ clear
             install_spigot(){
                 if [ "$INSTANCE" == "SPIGOT" ]; then
                     vars_spigot
-                    print_info "A spigot was detected!"
                     echo -e " ${BLUE}* ${reset}A spigot was detected!"
                     echo ""
                     low_echo "1. MOTD"
@@ -327,7 +329,8 @@ clear
                     low_echo "3. Login Plugin (AuthMe)"
                     low_echo "4. Another Plugins (INSTALLER)"
                     echo -e ""
-                    print_info "> Inialize installer for spigot"
+                    print_success "> Inialize installer for spigot"
+                    print_brake_A 40
 
                     # Install MOTD
                     touch "$PROPERTIES" #Make sure file exist
@@ -342,8 +345,10 @@ clear
                         fi
                     fi
                     if [ "$TMP_GREP" == "USER" ]; then
+                        echo -e ""
                         print_info "> MOTD is already set, by the previous user!"
                     elif [ "$TMP_GREP" == "SET" ]; then
+                        echo -e ""
                         print_info "> MOTD already set! Skipping.."
                     elif [ "$TMP_GREP" == "UNSET" ]; then
                         print_warning "> Creating the necessary files.. for $INSTANCE"
@@ -364,7 +369,7 @@ clear
                     else
                         print_info "> Set Icon"
                         wget -q "https://zahrajsi.net/amp/assets/pngs/server-icon.png"
-                        low_echo "> Downloading Server Icon from an external server.. for $INSTANCE"
+                        print_info "> Downloading Server Icon from an external server.. for $INSTANCE"
                         print_success "> Icon set successfully!"
                     fi
 
@@ -386,6 +391,7 @@ clear
                         rm -r authme-conf.tar.gz
                         print_success "> AuthMe set successfully!"
                         AUTHME="TRUE"
+                        INSTALL="TRUE"
                         fi
                     fi
 
@@ -538,4 +544,19 @@ if [ "$DEBUG" == "YES" ]; then
         errors
     }
     debug
+else
+    print_brake_A 30
+    if [ "$INSTALL" = "TRUE" ]; then
+        print_success "All DONE!, All changes have been successful!"
+    else
+        print_error "An error may have occurred during installation!"
+    fi
+    echo -e ""
+    echo -e ""
+    low_echo "Thank you for using $SCRIPT_N"
+    low_echo "If you wanna support me, let's go here $SUPPORT"
+    low_echo "If you want to use the backup use: "
+    low_echo "tar -zxf $BACKUP --"
+    low_echo ""
+    low_echo "Bye!"
 fi
