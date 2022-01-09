@@ -113,7 +113,7 @@ clear
 
 # Variables
     Variables(){
-        SCRIPT_VERSION="2.8"
+        SCRIPT_VERSION="2.8a"
         SUPPORT_LINK="https://zahrajsi.net"
         SUPPORT="https://zahrajsi.net"
         SCRIPT_N="AutoConfig-Node"
