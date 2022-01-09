@@ -5,7 +5,7 @@
 #  Install Script for automaticall add's plugins        
 #  @Zahrajsi.net
 #  @Owner: F0cus
-#  Version: 3.1
+#  Version: 3.2
 ###################################################
 clear
 
