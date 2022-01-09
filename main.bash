@@ -97,7 +97,7 @@ clear
 
 # Variables
     Variables(){
-        SCRIPT_VERSION="2.2"
+        SCRIPT_VERSION="2.6"
         SUPPORT_LINK="https://zahrajsi.net"
         SUPPORT="https://zahrajsi.net"
         SCRIPT_N="AutoConfig-Node"
