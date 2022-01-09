@@ -5,7 +5,7 @@
 #  Install Script for automaticall add's plugins        
 #  @Zahrajsi.net
 #  @Owner: F0cus
-#  Version: 3:0
+#  Version: 3.1
 ###################################################
 clear
 
@@ -38,6 +38,7 @@ clear
 
     OS=$(echo "$OS" | awk '{print tolower($0)}')
     OS_VER_MAJOR=$(echo "$OS_VER" | cut -d. -f1)
+    apt install -y jq
     }
 #
 
