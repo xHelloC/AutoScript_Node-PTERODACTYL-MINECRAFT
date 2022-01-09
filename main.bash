@@ -409,9 +409,9 @@ clear
                         sleep 2
                         tar -zxf authme-conf.tar.gz --directory plugins
                         rm -r authme-conf.tar.gz
+                        INSTALL="TRUE"
                         print_success "> AuthMe set successfully!"
                         AUTHME="TRUE"
-                        INSTALL="TRUE"
                         fi
                     fi
 
@@ -500,6 +500,7 @@ clear
                         sleep 2
                         tar -zxf "$W_Login_tar" --directory plugins
                         rm -r "$W_Login_tar"
+                        INSTALL="TRUE"
                         print_success "> AuthMeBungee set successfully!"
                         AUTHMEBUNGEE="TRUE"
                         fi
@@ -559,6 +560,7 @@ if [ "$DEBUG" == "YES" ]; then
         echo "$PROPERTIES"
         echo "$INSTANCE"
         echo "$MOTD_SET"
+        echo "$INSTALL"
         echo "$TMP_GREP"
         echo "$AUTHME"
         errors
