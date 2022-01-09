@@ -5,7 +5,7 @@
 #  Install Script for automaticall add's plugins        
 #  @Zahrajsi.net
 #  @Owner: F0cus
-#  Version: 1.2
+#  Version: 3:0
 ###################################################
 clear
 
@@ -104,8 +104,9 @@ clear
         read -p '>>> : ' I1 I2 I3 I4 I5 I6 I7 I8 I9 I10 
         print_info "Name of your world."
         read -p '>>> : ' world
-        low_echo "$I1 $I2 $I3 $I4 $I5 $I6 $I7"
-
+        print_info "Set your verison"
+        read -p '>>> : ' VERSION
+        echo "$WATERFALL_VER"
         if [ -z "$world" ]; then
             world="world"
         fi
@@ -113,16 +114,12 @@ clear
 
 # Variables
     Variables(){
-        SCRIPT_VERSION="2.8a"
+        SCRIPT_VERSION="3.0"
         SUPPORT_LINK="https://zahrajsi.net"
         SUPPORT="https://zahrajsi.net"
         SCRIPT_N="AutoConfig-Node"
         BACKUP="backup"
         world="world"
-        SPIGOT_VER="1.18.1"
-        WATERFALL_VER="1.18.1"
-        SPIGOT_LINK="https://papermc.io/ci/job/$SPIGOT_VER/lastStableBuild/artifact/paperclip.jar"
-        WATERFALL_LINK="https://papermc.io/ci/job/$WATERFALL_VER/lastStableBuild/artifact/waterfall.jar"
         SPIGOT_FILE="server.jar"
         WATERFALL_FILE="waterfall.jar"
         BUKKIT_FILE="bukkit.jar"
@@ -298,6 +295,87 @@ clear
     #
 #
 
+    spigot_wget(){
+        if [ -z "$VERSION" ]; then
+        # CHECK VERSION FOR SPIGOT
+            sleep 2
+            curl -s https://papermc.io/api/v2/projects/paper/ | jq '.' > tmp_ver.json
+            cat tmp_ver.json | jq '.versions[]'  > spigot_ver.tmp
+            sed 's/\"//g' spigot_ver.tmp > tmp
+            SPIGOT_VER=$(tail -1 tmp)
+            low_echo "Version = $SPIGOT_VER"
+            rm -r tmp_ver.json
+            rm -r spigot_ver.tmp
+            rm -r tmp
+            # CHECK BUILF FOR SPIGOT
+            curl -s https://papermc.io/api/v2/projects/paper/versions/$SPIGOT_VER/ | jq '.' > tmp_build.json
+            cat tmp_build.json | jq '.builds[]'  > spigot_ver.tmp
+            sed 's/\"//g' spigot_ver.tmp > tmp
+            SPIGOT_BUILD=$(tail -1 tmp)
+            low_echo "Build = $SPIGOT_BUILD"
+            sleep 4
+            rm -r tmp_build.json
+            rm -r spigot_ver.tmp
+            rm -r tmp
+            #Download and checksum
+            wget -q -O server.jar https://papermc.io/api/v2/projects/paper/versions/$SPIGOT_VER/builds/$SPIGOT_BUILD/downloads/paper-$SPIGOT_VER-$SPIGOT_BUILD.jar
+        else
+            # CHECK BUILF FOR SPIGOT
+            curl -s https://papermc.io/api/v2/projects/paper/versions/$VERSION/ | jq '.' > tmp_build.json
+            cat tmp_build.json | jq '.builds[]'  > spigot_ver.tmp
+            sed 's/\"//g' spigot_ver.tmp > tmp
+            SPIGOT_BUILD=$(tail -1 tmp)
+            low_echo "Version = $VERSION"
+            low_echo "Build = $SPIGOT_BUILD"
+            sleep 4
+            rm -r tmp_build.json
+            rm -r spigot_ver.tmp
+            rm -r tmp
+            #Download and checksum
+            wget -q -O server.jar https://papermc.io/api/v2/projects/paper/versions/$SPIGOT_VER/builds/$SPIGOT_BUILD/downloads/paper-$SPIGOT_VER-$SPIGOT_BUILD.jar
+        fi
+    }
+
+    waterafll_wget(){
+        if [ -z "$VERSION" ]; then
+        # CHECK VERSION FOR WATERFALL
+            curl -s https://papermc.io/api/v2/projects/waterfall/ | jq '.' > tmp_ver.json
+            cat tmp_ver.json | jq '.versions[]'  > waterfall_ver.tmp
+            sed 's/\"//g' waterfall_ver.tmp > tmp
+            WATERFALL_VER=$(tail -1 tmp)
+            low_echo "Version = $WATERFALL_VER"
+            rm -r tmp_ver.json
+            rm -r waterfall_ver.tmp
+            rm -r tmp
+            # CHECK BUILF FOR WATERFALL
+            curl -s https://papermc.io/api/v2/projects/paper/versions/$WATERFALL_VER/ | jq '.' > tmp_build.json
+            cat tmp_build.json | jq '.builds[]'  > waterfall_ver.tmp
+            sed 's/\"//g' waterfall_ver.tmp > tmp
+            WATERFALL_BUILD=$(tail -1 tmp)
+            low_echo "Build = $WATERFALL_BUILD"
+            sleep 4
+            rm -r tmp_build.json
+            rm -r waterfall_ver.tmp
+            rm -r tmp
+            #Download and checksum
+            wget -q -O waterfall.jar https://papermc.io/api/v2/projects/paper/versions/$WATERFALL_VER/builds/$WATERFALL_BUILD/downloads/paper-$WATERFALL_VER-$WATERFALL_BUILD.jar
+        else
+            # CHECK BUILF FOR WATERFALL
+            curl -s https://papermc.io/api/v2/projects/paper/versions/$VERSION/ | jq '.' > tmp_build.json
+            cat tmp_build.json | jq '.builds[]'  > waterfall_ver.tmp
+            sed 's/\"//g' waterfall_ver.tmp > tmp
+            WATERFALL_BUILD=$(tail -1 tmp)
+            low_echo "Version = $VERSION"
+            low_echo "Build = $WATERFALL_BUILD"
+            sleep 4
+            rm -r tmp_build.json
+            rm -r waterfall_ver.tmp
+            rm -r tmp
+            #Download and checksum
+            wget -q -O waterfall.jar https://papermc.io/api/v2/projects/paper/versions/$WATERFALL_VER/builds/$WATERFALL_BUILD/downloads/paper-$WATERFALL_VER-$WATERFALL_BUILD.jar
+        fi
+    }
+
 # Initial code
     main() {
     # WELCOME MESS.
@@ -351,7 +429,6 @@ clear
                     echo -e ""
                     print_success "> Inialize installer for spigot"
                     print_brake_A 40
-
                     # Install MOTD
                     touch "$PROPERTIES" #Make sure file exist
                     if [ -f "$PROPERTIES" ]; then
@@ -382,7 +459,6 @@ clear
                             rm -r "$D_FILE"
                         fi
                     fi
-
                     # Install Server-Icon
                     if [ -f "$ICON" ]; then
                         print_info "> The $ICON icon has already been set!"
@@ -392,29 +468,27 @@ clear
                         print_info "> Downloading Server Icon from an external server.. for $INSTANCE"
                         print_success "> Icon set successfully!"
                     fi
-
                     # Install Login Plugin
                     if [ -d "$Login_D" ] && [ ! "$AUTHME" == "TRUE" ]; then
                         print_info "> Authme plugin is already installed.."
                     else
                         print_info "> Installing AuthMe"
+                        if [ ! -d "$S_DIR" ]; then
+                            mkdir "$S_DIR"
+                        low_echo "Making folder!"
+                        fi
                         if [ ! -f "$Login_tar" ]; then
-                            low_echo "The $Login_tar file does not exist, they are downloading and unpacking"
-                            if [ ! -f "$S_DIR" ]; then
-                                mkdir "$S_DIR"
-                                low_echo "Making folder!"
-                            fi
-                        wget -q "https://zahrajsi.net/amp/assets/installer/authme-conf.tar.gz"
-                        low_echo "Unzipping the authme-conf.tar.gz"
-                        sleep 2
-                        tar -zxf authme-conf.tar.gz --directory plugins
-                        rm -r authme-conf.tar.gz
-                        INSTALL="TRUE"
-                        print_success "> AuthMe set successfully!"
-                        AUTHME="TRUE"
+                            low_echo "The $Login_tar file does not exist, Downloading and unpacking"
+                            wget -q "https://zahrajsi.net/amp/assets/installer/authme-conf.tar.gz"
+                            low_echo "Unzipping the authme-conf.tar.gz"
+                            sleep 2
+                            tar -zxf authme-conf.tar.gz --directory plugins
+                            rm -r authme-conf.tar.gz
+                            INSTALL="TRUE"
+                            print_success "> AuthMe set successfully!"
+                            AUTHME="TRUE"
                         fi
                     fi
-
                     # Install Another Plugin
                     if [ "$A_PLUGIN" != "TRUE" ]; then
                         echo -e ""
@@ -431,7 +505,7 @@ clear
             install_spigot
             # END OF SPIGOT 
 
-             install_waterfall(){
+            install_waterfall(){
                 if [ "$INSTANCE" == "WATERFALL" ]; then
                     vars_waterfall
                     print_info "A waterfall was detected!"
@@ -442,7 +516,6 @@ clear
                     low_echo "3. Login Plugin (AuthMeBungee)"
                     echo -e ""
                     print_info "> Inialize installer for waterafll"
-
                     # Install MOTD
                     touch "$W_PROPERTIES" #Make sure file exist
                     if [ -f "$W_PROPERTIES" ]; then
@@ -471,7 +544,6 @@ clear
                             rm -r "$W_D_FILE"
                         fi
                     fi
-
                     # Install Server-Icon
                     if [ -f "$ICON" ]; then
                         echo -e ""
@@ -483,26 +555,25 @@ clear
                         low_echo "> Downloading Server Icon from an external server.. for $INSTANCE"
                         print_success "> Icon set successfully!"
                     fi
-
                     # Install Login Plugin
                     if [ -d "$W_Login_D" ] && [ ! "$AUTHMEBUNGEE" == "TRUE" ]; then
                         print_info "> Authme plugin is already installed.."
                     else
                         print_info "> Installing AuthMeBungee"
+                        if [ ! -d "$W_S_DIR" ]; then
+                            mkdir "$W_S_DIR"
+                            low_echo "Making folder!"
+                        fi
                         if [ ! -f "$W_Login_tar" ]; then
                             low_echo "The $Login_tar file does not exist, they are downloading and unpacking"
-                            if [ ! -f "$W_S_DIR" ]; then
-                                mkdir "$W_S_DIR"
-                                low_echo "Making folder!"
-                            fi
-                        wget -q "https://zahrajsi.net/amp/assets/installer/$W_Login_tar"
-                        low_echo "Unzipping the $W_Login_tar"
-                        sleep 2
-                        tar -zxf "$W_Login_tar" --directory plugins
-                        rm -r "$W_Login_tar"
-                        INSTALL="TRUE"
-                        print_success "> AuthMeBungee set successfully!"
-                        AUTHMEBUNGEE="TRUE"
+                            wget -q "https://zahrajsi.net/amp/assets/installer/$W_Login_tar"
+                            low_echo "Unzipping the $W_Login_tar"
+                            sleep 2
+                            tar -zxf "$W_Login_tar" --directory plugins
+                            rm -r "$W_Login_tar"
+                            INSTALL="TRUE"
+                            print_success "> AuthMeBungee set successfully!"
+                            AUTHMEBUNGEE="TRUE"
                         fi
                     fi
                 fi 
@@ -522,7 +593,7 @@ clear
                             set -e
                             echo ""
                             low_echo "Downloading Spigot $SPIGOT_VER".
-                            wget -q "$SPIGOT_LINK" -O "$SPIGOT_FILE"
+                            spigot_wget
                             find_instance
                             install_spigot
                             break 1
@@ -530,7 +601,7 @@ clear
                         "Waterfall")
                             set -e
                             low_echo "Downloading Waterfall $WATERFALL_VER".
-                            wget -q "$WATERFALL_LINK" -O "$WATERFALL_FILE"
+                            waterafll_wget
                             find_instance
                             install_waterfall
                             break 1
